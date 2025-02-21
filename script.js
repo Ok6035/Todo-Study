@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
   };
   const customMainSubjects = [];
 
-  // Flag to indicate if a task timer is running (to disable deletes)
+  // Flag to indicate if a task timer is running (to disable deletes via toggle, if needed)
   let isTimerRunning = false;
   // Array to hold tasks with timers set (each task is an li element)
   let taskQueue = [];
@@ -156,6 +156,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const delButton = document.createElement('button');
     delButton.className = "delete-task";
     delButton.textContent = "Delete";
+    // Delete task event – always delete when clicked.
+    delButton.addEventListener('click', function() {
+      li.remove();
+    });
     detailsDiv.appendChild(delButton);
     li.appendChild(detailsDiv);
     
@@ -174,15 +178,6 @@ document.addEventListener("DOMContentLoaded", function() {
     li.dataset.taskStart = "";
     li.dataset.taskEnd = "";
     
-    // Delete task event: if timer is not running.
-    delButton.addEventListener('click', function() {
-      if (isTimerRunning) {
-        alert("Cannot delete tasks while timer is running.");
-        return;
-      }
-      li.remove();
-    });
-    
     // Set Timer event for the task.
     const setTimerButton = timerDiv.querySelector('.set-task-timer');
     setTimerButton.addEventListener('click', function() {
@@ -192,7 +187,6 @@ document.addEventListener("DOMContentLoaded", function() {
         alert("Please set both start and end times for the task.");
         return;
       }
-      // Validate that end time is after start time.
       if (endInput <= startInput) {
         alert("End time must be after start time.");
         return;
@@ -288,7 +282,6 @@ document.addEventListener("DOMContentLoaded", function() {
       alert("No tasks with timer set found.");
       return;
     }
-    // Sort tasks by scheduled start time.
     taskQueue.sort((a, b) => {
       return getScheduledTime(a.dataset.taskStart) - getScheduledTime(b.dataset.taskStart);
     });
@@ -307,16 +300,13 @@ document.addEventListener("DOMContentLoaded", function() {
       return;
     }
     const currentTask = taskQueue[currentTaskIndex];
-    // Get scheduled start and end times as Date objects.
     const scheduledStart = getScheduledTime(currentTask.dataset.taskStart);
     const scheduledEnd = getScheduledTime(currentTask.dataset.taskEnd);
     const now = new Date();
-    // Wait until the task's designated start time.
     let waitTime = scheduledStart - now;
     if (waitTime < 0) { waitTime = 0; }
     timerStatus.textContent = `Waiting for task ${currentTaskIndex+1} to start at ${currentTask.dataset.taskStart}`;
     setTimeout(() => {
-      // At task start, play a 5‑second beep.
       timerStatus.textContent = `Task ${currentTaskIndex+1} starting...`;
       beepSound(5, false);
       setTimeout(() => {
@@ -327,7 +317,6 @@ document.addEventListener("DOMContentLoaded", function() {
           if (remaining <= 0) {
             clearInterval(interval);
             timerStatus.textContent = `Task ${currentTaskIndex+1} time over!`;
-            // Play 10‑second siren beep when the task ends.
             beepSound(10, true);
             currentTask.style.opacity = 0.5;
             setTimeout(() => {
