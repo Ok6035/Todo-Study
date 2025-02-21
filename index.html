@@ -8,9 +8,13 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Header with Todo App text and real time clock on right -->
+  <header class="app-header">
+    <h1>Todo App</h1>
+    <div id="realtime"></div>
+  </header>
   <!-- Main app container centered in the middle -->
   <div class="container">
-      <h1>Todo App</h1>
       <!-- Todo & Task Input Section -->
       <div class="todo-input">
          <input type="text" id="todoText" placeholder="Enter your todo...">
@@ -45,9 +49,10 @@
          <div id="timerStatus">No Task Running</div>
       </div>
   </div>
-  <!-- Real-Time clock displayed on the right side of the viewport -->
-  <div id="realtime"></div>
-  <p class="developer"><strong>Developed by: KhanOsama</strong></p>
+  <!-- Footer with Developer info -->
+  <div class="footer">
+      <p class="developer"><strong>Developed by: KhanOsama</strong></p>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
