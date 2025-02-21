@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
+  // Elements for task creation and subject controls
   const todoText = document.getElementById('todoText');
   const priority = document.getElementById('priority');
   const subject = document.getElementById('subject');
@@ -7,32 +8,32 @@ document.addEventListener("DOMContentLoaded", function() {
   const deleteSubjectButton = document.getElementById('deleteSubject');
   const deleteSubSubjectButton = document.getElementById('deleteSubSubject');
   const todoList = document.getElementById('todoList');
-  const startTimerButton = document.getElementById('startTimer');
-  const startTimeInput = document.getElementById('startTime');
-  const endTimeInput = document.getElementById('endTime');
+  const startAllTimersButton = document.getElementById('startAllTimers');
   const timerStatus = document.getElementById('timerStatus');
 
-  // Default main subjects that cannot be deleted
+  // Default main subjects and sub-subject mapping
   const defaultMainSubjects = ["STATISTICS", "MATHEMATICS", "ECONOMICS"];
-  
-  // Default mapping for sub-subjects based on selected main subject
   const subSubjectsMapping = {
     "STATISTICS": ["Probability", "Data Analysis", "Inferential"],
     "MATHEMATICS": ["Algebra", "Calculus", "Geometry"],
     "ECONOMICS": ["Microeconomics", "Macroeconomics", "Econometrics"]
   };
-
-  // Store custom sub-subjects added by the user for each main subject
   const customSubs = {
     "STATISTICS": [],
     "MATHEMATICS": [],
     "ECONOMICS": []
   };
-
-  // Store custom main subjects added by the user
   const customMainSubjects = [];
 
-  // Function to update the Sub-Subject dropdown based on the selected main subject
+  // Flag to indicate if a task timer is running (to disable deletes)
+  let isTimerRunning = false;
+  // Array to hold tasks with timers set for scheduling (each task is an li element)
+  let taskQueue = [];
+  // Index of the current task being processed
+  let currentTaskIndex = 0;
+  let countdownIntervalId = null;
+
+  // Subject / Sub-Subject handling
   function updateSubSubjects(selectedSubject) {
     subSubject.innerHTML = "";
     let defaultOption = document.createElement('option');
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
     defaultOption.textContent = "Select Sub-Subject";
     subSubject.appendChild(defaultOption);
     
-    // Add default sub-subjects if available
+    // Add default sub-subjects
     const subs = subSubjectsMapping[selectedSubject] || [];
     subs.forEach(function(item) {
       let option = document.createElement('option');
@@ -48,23 +49,20 @@ document.addEventListener("DOMContentLoaded", function() {
       option.textContent = item;
       subSubject.appendChild(option);
     });
-
-    // Add any custom sub-subjects for this main subject
+    // Add custom sub-subjects if any
     (customSubs[selectedSubject] || []).forEach(function(item) {
       let option = document.createElement('option');
       option.value = item;
       option.textContent = item;
       subSubject.appendChild(option);
     });
-    
-    // Add "Add More" option for adding new custom sub-subjects
+    // Add "Add More" option
     let addMoreOption = document.createElement('option');
     addMoreOption.value = "ADD_MORE";
     addMoreOption.textContent = "Add More";
     subSubject.appendChild(addMoreOption);
   }
-
-  // Listener for when user selects "Add More" in the Sub-Subject dropdown
+  
   subSubject.addEventListener('change', function() {
     if (subSubject.value === "ADD_MORE") {
       let customSub = prompt("Enter custom sub-subject:");
@@ -80,8 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
   });
-
-  // Listener for main subject dropdown "Add More" option or deletion
+  
   subject.addEventListener('change', function() {
     if (subject.value === "ADD_MORE") {
       let customMain = prompt("Enter custom subject:");
@@ -92,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function() {
         newOption.textContent = customMain.trim();
         subject.insertBefore(newOption, subject.lastElementChild);
         subject.value = customMain.trim();
-        // Initialize empty sub-subject lists for the new subject
         subSubjectsMapping[customMain.trim()] = [];
         customSubs[customMain.trim()] = [];
       } else {
@@ -101,47 +97,38 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     updateSubSubjects(subject.value);
   });
-
-  // Delete main subject if it is a custom subject
+  
   deleteSubjectButton.addEventListener('click', function() {
     const selected = subject.value;
     if (defaultMainSubjects.includes(selected)) {
       alert("Default subjects cannot be deleted.");
     } else {
-      const confirmDelete = confirm(`Are you sure you want to delete the subject "${selected}"?`);
-      if (confirmDelete) {
-        // Remove from customMainSubjects
+      if (confirm(`Are you sure you want to delete the subject "${selected}"?`)) {
         const index = customMainSubjects.indexOf(selected);
         if (index !== -1) {
           customMainSubjects.splice(index, 1);
         }
-        // Remove the option from the subject dropdown
         for (let i = 0; i < subject.options.length; i++) {
           if (subject.options[i].value === selected) {
             subject.remove(i);
             break;
           }
         }
-        // Remove associated sub-subject data
         delete subSubjectsMapping[selected];
         delete customSubs[selected];
-        // Set subject to first default subject
         subject.value = defaultMainSubjects[0];
         updateSubSubjects(subject.value);
       }
     }
   });
-
-  // Delete sub-subject if it is custom
+  
   deleteSubSubjectButton.addEventListener('click', function() {
     const currentSubject = subject.value;
     const selectedSub = subSubject.value;
-    // Check if this sub-subject is a default (present in subSubjectsMapping) or custom (present in customSubs)
     if ((subSubjectsMapping[currentSubject] && subSubjectsMapping[currentSubject].includes(selectedSub))) {
       alert("Default sub-subjects cannot be deleted.");
     } else if (customSubs[currentSubject] && customSubs[currentSubject].includes(selectedSub)) {
-      const confirmDelete = confirm(`Are you sure you want to delete the sub-subject "${selectedSub}"?`);
-      if (confirmDelete) {
+      if (confirm(`Delete sub-subject "${selectedSub}"?`)) {
         const index = customSubs[currentSubject].indexOf(selectedSub);
         if (index !== -1) {
           customSubs[currentSubject].splice(index, 1);
@@ -152,100 +139,120 @@ document.addEventListener("DOMContentLoaded", function() {
       alert("Please select a custom sub-subject to delete.");
     }
   });
-
-  // Initialize sub-subject dropdown based on the default selected subject
+  
   updateSubSubjects(subject.value);
-
-  // Add a todo item to the list
+  
+  // Function to create a new task element in the todo list.
+  // In addition to task details, each task has two time inputs: start and end time.
+  // These inputs represent the absolute clock time (HH:MM) at which the task should run.
+  // When "Set Timer" is clicked, the values are stored in the task's dataset.
+  function createTaskElement(text, priorityValue, subjectValue, subSubjectValue) {
+    const li = document.createElement('li');
+    // Task details div: displays the task text and a delete button.
+    const detailsDiv = document.createElement('div');
+    detailsDiv.className = "task-details";
+    const taskSpan = document.createElement('span');
+    taskSpan.className = "task-text";
+    taskSpan.textContent = `Todo: ${text} | Priority: ${priorityValue} | Subject: ${subjectValue} | Sub-Subject: ${subSubjectValue}`;
+    detailsDiv.appendChild(taskSpan);
+    const delButton = document.createElement('button');
+    delButton.className = "delete-task";
+    delButton.textContent = "Delete";
+    detailsDiv.appendChild(delButton);
+    li.appendChild(detailsDiv);
+    
+    // Timer section for the task: two time inputs and a button to set the task timer.
+    const timerDiv = document.createElement('div');
+    timerDiv.className = "task-timer-section";
+    timerDiv.innerHTML = `
+      <label>Start Time: <input type="time" class="task-start"></label>
+      <label>End Time: <input type="time" class="task-end"></label>
+      <button class="set-task-timer">Set Timer</button>
+      <span class="task-timer-display"></span>
+    `;
+    li.appendChild(timerDiv);
+    // Store the task's start and end time in dataset when timer is set.
+    li.dataset.timerSet = "false";
+    li.dataset.taskStart = "";
+    li.dataset.taskEnd = "";
+    
+    // Delete task event: if timer is not running.
+    delButton.addEventListener('click', function() {
+      if (isTimerRunning) {
+        alert("Cannot delete tasks while timer is running.");
+        return;
+      }
+      li.remove();
+    });
+    
+    // Set Timer event for the task.
+    const setTimerButton = timerDiv.querySelector('.set-task-timer');
+    setTimerButton.addEventListener('click', function() {
+      const startInput = timerDiv.querySelector('.task-start').value;
+      const endInput = timerDiv.querySelector('.task-end').value;
+      if (!startInput || !endInput) {
+        alert("Please set both start and end times for the task.");
+        return;
+      }
+      // Validate that end time is after start time.
+      if (endInput <= startInput) {
+        alert("End time must be after start time.");
+        return;
+      }
+      li.dataset.timerSet = "true";
+      li.dataset.taskStart = startInput;
+      li.dataset.taskEnd = endInput;
+      const displaySpan = timerDiv.querySelector('.task-timer-display');
+      displaySpan.textContent = `Timer set: ${startInput} to ${endInput}`;
+    });
+    
+    return li;
+  }
+  
+  // Add new task event.
   addTodoButton.addEventListener('click', function() {
-    let text = todoText.value.trim();
+    const text = todoText.value.trim();
     if (text === "") {
       alert("Please enter a todo item.");
       return;
     }
-    let li = document.createElement('li');
-    li.textContent = `Todo: ${text} | Priority: ${priority.value} | Subject: ${subject.value} | Sub-Subject: ${subSubject.value}`;
-    todoList.appendChild(li);
+    const taskEl = createTaskElement(text, priority.value, subject.value, subSubject.value);
+    todoList.appendChild(taskEl);
     todoText.value = "";
   });
-
-  // Timer functionality for study sessions
-  startTimerButton.addEventListener('click', function() {
-    const startTimeVal = startTimeInput.value;
-    const endTimeVal = endTimeInput.value;
-    if (!startTimeVal || !endTimeVal) {
-      alert("Please set both start and end times.");
-      return;
-    }
-    const now = new Date();
-    const [startHours, startMinutes] = startTimeVal.split(':').map(Number);
-    const [endHours, endMinutes] = endTimeVal.split(':').map(Number);
-    let startTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHours, startMinutes, 0);
-    let endTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endHours, endMinutes, 0);
-
-    // If the chosen times are in the past, assume next day
-    if (startTime < now) {
-      startTime.setDate(startTime.getDate() + 1);
-    }
-    if (endTime < now) {
-      endTime.setDate(endTime.getDate() + 1);
-    }
-    if (endTime <= startTime) {
-      alert("End time must be after start time.");
-      return;
-    }
-    timerStatus.textContent = "Timer set. Waiting for start time...";
-
-    // Wait until the start time is reached, then start countdown
-    setTimeout(function() {
-      // At the start time, play a 5-second normal beep to indicate the timer has started
-      beepSound(5, false);
-
-      // Start the countdown interval updating every second
-      let countdownInterval = setInterval(function() {
-        let nowTime = new Date();
-        let remaining = Math.max(0, endTime - nowTime);
-        let minutes = Math.floor((remaining / 1000) / 60).toString().padStart(2, '0');
-        let seconds = Math.floor((remaining / 1000) % 60).toString().padStart(2, '0');
-        timerStatus.textContent = `Time Remaining: ${minutes}:${seconds}`;
-
-        if (remaining <= 0) {
-          clearInterval(countdownInterval);
-          timerStatus.textContent = "Time is over!";
-          // When time is over, play a 10-second siren beep
-          beepSound(10, true);
-        }
-      }, 1000);
-    }, startTime - now);
-  });
-
-  // Generate beep sound using the Web Audio API.
-  // duration: seconds, isSiren: true for siren-like sound, false for normal beep.
+  
+  // Disable delete buttons while timer is running.
+  function toggleDeleteButtons(disable) {
+    const deleteButtons = document.querySelectorAll(".delete-task");
+    deleteButtons.forEach(btn => {
+      if (disable) {
+        btn.classList.add("disabled");
+      } else {
+        btn.classList.remove("disabled");
+      }
+    });
+  }
+  
+  // Beep sound function using the Web Audio API.
+  // duration in seconds, isSiren: if true then use a siren-like modulation.
   function beepSound(duration, isSiren) {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioCtx.createOscillator();
     oscillator.type = isSiren ? 'sawtooth' : 'sine';
-    
     const gainNode = audioCtx.createGain();
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
-    
-    // Set initial gain (volume/intensity)
     gainNode.gain.setValueAtTime(0.7, audioCtx.currentTime);
-    
     oscillator.start();
-
     let startTime = audioCtx.currentTime;
     
     if (isSiren) {
-      // Siren-like modulation for a more intense sound over the specified duration
       function modulate() {
         let now = audioCtx.currentTime;
         let elapsed = now - startTime;
         if (elapsed >= duration) {
           oscillator.stop();
         } else {
-          // Oscillate frequency between 500Hz and 1000Hz
           let newFreq = 750 + 250 * Math.sin(2 * Math.PI * elapsed);
           oscillator.frequency.setValueAtTime(newFreq, now);
           requestAnimationFrame(modulate);
@@ -253,9 +260,104 @@ document.addEventListener("DOMContentLoaded", function() {
       }
       modulate();
     } else {
-      // For normal beep, use fixed frequency (e.g., 440Hz - A4 note)
       oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
       oscillator.stop(audioCtx.currentTime + duration);
     }
   }
+  
+  // Function to convert a HH:MM string to a Date object (using today's date; if the time has already passed, add one day).
+  function getScheduledTime(timeStr) {
+    let [hours, minutes] = timeStr.split(":").map(Number);
+    let now = new Date();
+    let scheduled = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
+    if (scheduled < now) {
+      // if time already passed, assume next day
+      scheduled.setDate(scheduled.getDate() + 1);
+    }
+    return scheduled;
+  }
+  
+  // Global scheduler that processes tasks sequentially based on their scheduled start times.
+  function startTaskTimers() {
+    taskQueue = [];
+    const tasks = todoList.querySelectorAll("li");
+    tasks.forEach(task => {
+      if (task.dataset.timerSet === "true" && task.dataset.taskStart && task.dataset.taskEnd) {
+        taskQueue.push(task);
+      }
+    });
+    if (taskQueue.length === 0) {
+      alert("No tasks with timer set found.");
+      return;
+    }
+    // Sort taskQueue by scheduled start time (optional; assumes tasks added in order but better safe than sorry)
+    taskQueue.sort((a, b) => {
+      return getScheduledTime(a.dataset.taskStart) - getScheduledTime(b.dataset.taskStart);
+    });
+    currentTaskIndex = 0;
+    isTimerRunning = true;
+    toggleDeleteButtons(true);
+    processNextTask();
+  }
+  
+  // Function to process the next task in the taskQueue.
+  function processNextTask() {
+    if (currentTaskIndex >= taskQueue.length) {
+      timerStatus.textContent = "All tasks completed.";
+      isTimerRunning = false;
+      toggleDeleteButtons(false);
+      return;
+    }
+    const currentTask = taskQueue[currentTaskIndex];
+    // Get the scheduled start and end times as Date objects.
+    const scheduledStart = getScheduledTime(currentTask.dataset.taskStart);
+    const scheduledEnd = getScheduledTime(currentTask.dataset.taskEnd);
+    const now = new Date();
+    // Wait until the task's designated start time.
+    let waitTime = scheduledStart - now;
+    if (waitTime < 0) { waitTime = 0; }
+    timerStatus.textContent = `Waiting for task ${currentTaskIndex+1} to start at ${currentTask.dataset.taskStart}`;
+    setTimeout(() => {
+      // When task starts, play the 5-second beep.
+      timerStatus.textContent = `Task ${currentTaskIndex+1} starting...`;
+      beepSound(5, false);
+      setTimeout(() => {
+        // Start countdown for the task until its end time.
+        let interval = setInterval(() => {
+          let nowTime = new Date();
+          let remaining = Math.max(0, scheduledEnd - nowTime);
+          timerStatus.textContent = formatTime(remaining);
+          if (remaining <= 0) {
+            clearInterval(interval);
+            timerStatus.textContent = `Task ${currentTaskIndex+1} time over!`;
+            // Play 10-second siren beep.
+            beepSound(10, true);
+            // Mark task as completed (e.g., grey it out)
+            currentTask.style.opacity = 0.5;
+            setTimeout(() => {
+              currentTaskIndex++;
+              processNextTask();
+            }, 10000);
+          }
+        }, 1000);
+      }, 5000);
+    }, waitTime);
+  }
+  
+  // Helper function to format time in mm:ss format.
+  function formatTime(milliseconds) {
+    let seconds = Math.ceil(milliseconds / 1000);
+    let mm = Math.floor(seconds / 60).toString().padStart(2, '0');
+    let ss = Math.floor(seconds % 60).toString().padStart(2, '0');
+    return `Time Remaining: ${mm}:${ss}`;
+  }
+  
+  // Global Start All Timers button event.
+  startAllTimersButton.addEventListener('click', function() {
+    if (isTimerRunning) {
+      alert("Timer is already running.");
+      return;
+    }
+    startTaskTimers();
+  });
 });
