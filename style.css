@@ -14,24 +14,24 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Container styling */
+/* Container positioned in the middle */
 .container {
-  max-width: 600px;
-  margin: 20px auto;
+  max-width: 800px;
+  margin: 50px auto;
   padding: 20px;
 }
 
-/* Todo input section */
+/* Todo input section styling */
 .todo-input {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 .todo-input input[type="text"],
-.todo-input select,
-.todo-input input[type="time"] {
+.todo-input select {
   padding: 10px;
   border: 1px solid #555;
   background-color: #1f1f1f;
@@ -47,13 +47,24 @@ button {
   border: none;
   cursor: pointer;
   border-radius: 4px;
-  box-shadow: 0 4px #00008b; /* 3D effect with dark blue shadow */
+  box-shadow: 0 4px #00008b;
   transition: all 0.1s ease-in-out;
 }
 
 button:active {
   box-shadow: 0 2px #00008b;
   transform: translateY(2px);
+}
+
+/* Global Timer section styling */
+.global-timer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#timerStatus {
+  margin-top: 10px;
+  font-size: 1.2em;
 }
 
 /* Todo list styling */
@@ -64,8 +75,36 @@ ul#todoList {
 
 ul#todoList li {
   padding: 10px;
-  margin: 5px 0;
+  margin: 10px 0;
   background-color: #1f1f1f;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Task details and controls */
+.task-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-timer-section {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.task-timer-section label {
+  font-size: 0.9em;
+}
+
+.task-timer-section input[type="time"] {
+  padding: 5px;
+  border: 1px solid #555;
+  background-color: #1f1f1f;
+  color: #fff;
   border-radius: 4px;
 }
 
@@ -75,6 +114,12 @@ ul#todoList li {
   color: red;
   margin-top: 20px;
   font-weight: bold;
+}
+
+/* Disable pointer events for delete buttons when timer is running */
+button.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 /* Ensure smooth touch response behavior */
