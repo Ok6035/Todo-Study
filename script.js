@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const delButton = document.createElement('button');
     delButton.className = "delete-task";
     delButton.textContent = "Delete";
-    // Delete task event – always delete when clicked.
+    // Delete task event – deletion is always allowed.
     delButton.addEventListener('click', function() {
       li.remove();
     });
@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <span class="task-timer-display"></span>
     `;
     li.appendChild(timerDiv);
-    // Store the task's start and end time in dataset when timer is set.
+    // Store the task's start and end times in dataset when timer is set.
     li.dataset.timerSet = "false";
     li.dataset.taskStart = "";
     li.dataset.taskEnd = "";
@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   
   // Beep sound function using the Web Audio API.
-  // duration in seconds, isSiren: if true then use a siren-like modulation.
+  // duration in seconds, isSiren: true to use siren-like modulation.
   function beepSound(duration, isSiren) {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioCtx.createOscillator();
@@ -257,8 +257,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
   
-  // Function to convert a HH:MM string to a Date object (using today's date;
-  // if the time has already passed, add one day).
+  // Convert a HH:MM string to a Date object (using today's date; if passed, add 1 day).
   function getScheduledTime(timeStr) {
     let [hours, minutes] = timeStr.split(":").map(Number);
     let now = new Date();
@@ -269,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function() {
     return scheduled;
   }
   
-  // Global scheduler that processes tasks sequentially based on their scheduled start times.
+  // Global scheduler to process tasks sequentially based on scheduled start times.
   function startTaskTimers() {
     taskQueue = [];
     const tasks = todoList.querySelectorAll("li");
@@ -329,7 +328,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }, waitTime);
   }
   
-  // Helper function to format milliseconds into mm:ss.
+  // Helper to format remaining time in mm:ss.
   function formatTime(milliseconds) {
     let seconds = Math.ceil(milliseconds / 1000);
     let mm = Math.floor(seconds / 60).toString().padStart(2, '0');
