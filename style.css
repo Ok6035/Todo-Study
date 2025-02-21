@@ -20,12 +20,37 @@ body {
   font-family: Arial, sans-serif;
 }
 
+/* Header styling with flex layout */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #1f1f1f;
+  box-shadow: 0 4px #00008b;
+}
+
+.app-header h1 {
+  margin: 0;
+}
+
+/* Real-time clock styling: displayed on the right side of the header */
+#realtime {
+  font-size: 1.2em;
+  background-color: #121212;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 4px #00008b;
+  text-align: center;
+}
+
 /* Container centered on the screen */
 .container {
   max-width: 800px;
-  margin: 50px auto;
+  margin: 20px auto 20px auto;
   padding: 20px;
-  position: relative;
 }
 
 /* Todo input section styling */
@@ -131,32 +156,25 @@ ul#todoList li {
   border-radius: 4px;
 }
 
-/* Developer text styling */
-.developer {
+/* Footer styling */
+.footer {
   text-align: center;
-  color: red;
-  margin-top: 20px;
-  font-weight: bold;
+  margin: 20px 0;
 }
 
-/* Real-time clock styling: positioned on the right side, white and with a 3D effect */
-#realtime {
-  position: fixed;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: #121212;
-  color: #ffffff;
-  font-size: 1.4em;
-  padding: 10px 20px;
-  border: 2px solid #ffffff;
-  border-radius: 4px;
-  box-shadow: 0 4px #00008b;
-  text-align: center;
+/* Developer text styling */
+.developer {
+  color: red;
+  font-weight: bold;
 }
 
 /* Ensure no unwanted content appears on the side on phones */
 @media (max-width: 600px) {
+  .app-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 10px;
+  }
   .container {
     width: 100%;
     margin: 0 auto;
@@ -167,8 +185,7 @@ ul#todoList li {
     text-align: center;
   }
   #realtime {
-    position: static;
-    transform: none;
-    margin-top: 20px;
+    padding: 5px 10px;
+    font-size: 1em;
   }
 }
