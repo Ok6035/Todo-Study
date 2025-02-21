@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Todo App with Timer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+      <h1>Todo App</h1>
+      <div class="todo-input">
+         <input type="text" id="todoText" placeholder="Enter your todo...">
+         <select id="priority">
+             <option value="High">High</option>
+             <option value="Medium" selected>Medium</option>
+             <option value="Low">Low</option>
+         </select>
+         <!-- Main subject dropdown with Add More option -->
+         <select id="subject">
+             <option value="STATISTICS">STATISTICS</option>
+             <option value="MATHEMATICS">MATHEMATICS</option>
+             <option value="ECONOMICS">ECONOMICS</option>
+             <option value="ADD_MORE">Add More</option>
+         </select>
+         <button id="deleteSubject">Delete Subject</button>
+         <!-- Sub-Subject dropdown includes option to add more custom sub subjects -->
+         <select id="subSubject">
+             <option value="None">Select Sub-Subject</option>
+         </select>
+         <button id="deleteSubSubject">Delete Sub-Subject</button>
+         <button id="addTodo">Add Todo</button>
+      </div>
+      <ul id="todoList"></ul>
+      <hr>
+      <div class="timer">
+         <h2>Study Timer</h2>
+         <label>Start Time: <input type="time" id="startTime"></label>
+         <label>End Time: <input type="time" id="endTime"></label>
+         <button id="startTimer">Start Timer</button>
+         <div id="timerStatus"></div>
+      </div>
+  </div>
+  <p class="developer"><strong>Developed by: KhanOsama</strong></p>
+  <script src="script.js"></script>
+</body>
+</html>
