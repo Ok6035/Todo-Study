@@ -1,8 +1,14 @@
-/* Disable text selection across the app */
+/* Disable text selection */
 * {
   user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+}
+
+/* Prevent horizontal scrolling and restrict touch actions to vertical only */
+html, body {
+  overflow-x: hidden;
+  touch-action: pan-y;
 }
 
 /* Dark theme styling */
@@ -14,7 +20,7 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Container positioned in the middle of the screen */
+/* Container centered on the screen */
 .container {
   max-width: 800px;
   margin: 50px auto;
@@ -39,14 +45,15 @@ body {
   border-radius: 4px;
 }
 
-/* Blue 3D button styling */
+/* General 3D button styling */
 button {
   padding: 10px 20px;
-  background-color: #0000ff;
+  background-color: #0000ff;  /* default blue */
   color: #fff;
   border: none;
   cursor: pointer;
   border-radius: 4px;
+  /* 3D effect */
   box-shadow: 0 4px #00008b;
   transition: all 0.1s ease-in-out;
 }
@@ -54,6 +61,17 @@ button {
 button:active {
   box-shadow: 0 2px #00008b;
   transform: translateY(2px);
+}
+
+/* Specific button colors */
+#deleteSubject,
+#deleteSubSubject {
+  background-color: red;
+  border: 2px solid darkred;
+}
+#startAllTimers {
+  background-color: green;
+  border: 2px solid darkgreen;
 }
 
 /* Global Timer section styling (vertical layout) */
@@ -116,12 +134,6 @@ ul#todoList li {
   color: red;
   margin-top: 20px;
   font-weight: bold;
-}
-
-/* Disable pointer events for delete buttons when timer is running */
-button.disabled {
-  opacity: 0.5;
-  pointer-events: none;
 }
 
 /* Ensure no unwanted content appears on the side on phones */
