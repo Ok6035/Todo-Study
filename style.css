@@ -5,7 +5,7 @@
   -ms-user-select: none;
 }
 
-/* Prevent horizontal scrolling and restrict touch actions to vertical only */
+/* Prevent horizontal scrolling and restrict touch actions to vertical */
 html, body {
   overflow-x: hidden;
   touch-action: pan-y;
@@ -25,6 +25,7 @@ body {
   max-width: 800px;
   margin: 50px auto;
   padding: 20px;
+  position: relative;
 }
 
 /* Todo input section styling */
@@ -65,10 +66,12 @@ button:active {
 
 /* Specific button colors */
 #deleteSubject,
-#deleteSubSubject {
+#deleteSubSubject,
+.delete-task {
   background-color: red;
   border: 2px solid darkred;
 }
+
 #startAllTimers {
   background-color: green;
   border: 2px solid darkgreen;
@@ -136,6 +139,22 @@ ul#todoList li {
   font-weight: bold;
 }
 
+/* Real-time clock styling: positioned on the right side, white and with a 3D effect */
+#realtime {
+  position: fixed;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #121212;
+  color: #ffffff;
+  font-size: 1.4em;
+  padding: 10px 20px;
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 4px #00008b;
+  text-align: center;
+}
+
 /* Ensure no unwanted content appears on the side on phones */
 @media (max-width: 600px) {
   .container {
@@ -146,5 +165,10 @@ ul#todoList li {
   .todo-input, .global-timer, .task-timer-section {
     width: 100%;
     text-align: center;
+  }
+  #realtime {
+    position: static;
+    transform: none;
+    margin-top: 20px;
   }
 }
