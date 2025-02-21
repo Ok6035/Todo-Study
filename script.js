@@ -1,4 +1,3 @@
-// Use local storage key "tasks" to persist task details.
 document.addEventListener("DOMContentLoaded", function() {
   // Elements for task creation and subject controls
   const todoText = document.getElementById('todoText');
@@ -13,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const timerStatus = document.getElementById('timerStatus');
   const realtime = document.getElementById('realtime');
 
-  // Default subjects and mappings remain the same
+  // Default subjects and mappings
   const defaultMainSubjects = ["STATISTICS", "MATHEMATICS", "ECONOMICS"];
   const subSubjectsMapping = {
     "STATISTICS": ["Probability", "Data Analysis", "Inferential"],
@@ -33,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
   let currentTaskIndex = 0;
   let countdownIntervalId = null;
 
-  // Update subjects in the subSubject dropdown
+  // Update sub-subject dropdown based on selected subject
   function updateSubSubjects(selectedSubject) {
     subSubject.innerHTML = "";
     const defaultOption = document.createElement('option');
@@ -41,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function() {
     defaultOption.textContent = "Select Sub-Subject";
     subSubject.appendChild(defaultOption);
     
-    // Add default sub-subjects
     const subs = subSubjectsMapping[selectedSubject] || [];
     subs.forEach(function(item) {
       const option = document.createElement('option');
@@ -49,14 +47,12 @@ document.addEventListener("DOMContentLoaded", function() {
       option.textContent = item;
       subSubject.appendChild(option);
     });
-    // Add custom sub-subjects
     (customSubs[selectedSubject] || []).forEach(function(item) {
       const option = document.createElement('option');
       option.value = item;
       option.textContent = item;
       subSubject.appendChild(option);
     });
-    // Add "Add More" option
     const addMoreOption = document.createElement('option');
     addMoreOption.value = "ADD_MORE";
     addMoreOption.textContent = "Add More";
@@ -140,10 +136,9 @@ document.addEventListener("DOMContentLoaded", function() {
   
   updateSubSubjects(subject.value);
   
-  // Create a task element with its details and timer inputs.
+  // Create a task element (storing timer info if available)
   function createTaskElement(text, priorityValue, subjectValue, subSubjectValue, timerSet = false, taskStart = "", taskEnd = "") {
     const li = document.createElement('li');
-    // Task details with a delete button
     const detailsDiv = document.createElement('div');
     detailsDiv.className = "task-details";
     const taskSpan = document.createElement('span');
@@ -153,9 +148,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const delButton = document.createElement('button');
     delButton.className = "delete-task";
     delButton.textContent = "Delete";
-    // Always allow deletion; if the running task is deleted, stop timers.
     delButton.addEventListener('click', function() {
-      // If this task is currently running, stop the timer.
       if (isTimerRunning && taskQueue[currentTaskIndex] === li) {
         stopTaskTimers();
       }
@@ -165,7 +158,6 @@ document.addEventListener("DOMContentLoaded", function() {
     detailsDiv.appendChild(delButton);
     li.appendChild(detailsDiv);
     
-    // Timer section for the task.
     const timerDiv = document.createElement('div');
     timerDiv.className = "task-timer-section";
     timerDiv.innerHTML = `
@@ -184,7 +176,6 @@ document.addEventListener("DOMContentLoaded", function() {
       displaySpan.textContent = `Timer set: ${taskStart} to ${taskEnd}`;
     }
     
-    // Set Timer button event.
     const setTimerButton = timerDiv.querySelector('.set-task-timer');
     setTimerButton.addEventListener('click', function() {
       const startInput = timerDiv.querySelector('.task-start').value;
@@ -208,7 +199,6 @@ document.addEventListener("DOMContentLoaded", function() {
     return li;
   }
   
-  // Add a new task event.
   addTodoButton.addEventListener('click', function() {
     const text = todoText.value.trim();
     if (text === "") {
@@ -221,7 +211,6 @@ document.addEventListener("DOMContentLoaded", function() {
     saveTasksToLocalStorage();
   });
   
-  // Save current tasks to localStorage.
   function saveTasksToLocalStorage() {
     const tasks = [];
     const taskElements = todoList.querySelectorAll("li");
@@ -236,14 +225,11 @@ document.addEventListener("DOMContentLoaded", function() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }
   
-  // Load tasks from localStorage.
   function loadTasksFromLocalStorage() {
     const tasksString = localStorage.getItem("tasks");
     if (tasksString) {
       const tasks = JSON.parse(tasksString);
       tasks.forEach(task => {
-        // The text already includes details; we extract the part after "Todo: " up to the first "|" for simplicity.
-        // For this example, we assume the stored task.text can be used as is.
         const li = createTaskElement(task.text, "", "", "", task.timerSet === "true", task.taskStart, task.taskEnd);
         todoList.appendChild(li);
       });
@@ -252,7 +238,6 @@ document.addEventListener("DOMContentLoaded", function() {
   
   loadTasksFromLocalStorage();
   
-  // Stop all running task timers.
   function stopTaskTimers() {
     if (countdownIntervalId) clearInterval(countdownIntervalId);
     isTimerRunning = false;
@@ -260,7 +245,6 @@ document.addEventListener("DOMContentLoaded", function() {
     timerStatus.textContent = "No Task Running";
   }
   
-  // Beep sound function using the Web Audio API.
   function beepSound(duration, isSiren) {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioCtx.createOscillator();
@@ -290,7 +274,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
   
-  // Convert a HH:MM string to a Date object (using today's date; if already passed, add one day)
   function getScheduledTime(timeStr) {
     const [hours, minutes] = timeStr.split(":").map(Number);
     const now = new Date();
@@ -301,7 +284,6 @@ document.addEventListener("DOMContentLoaded", function() {
     return scheduled;
   }
   
-  // Scheduler: process tasks sequentially by scheduled start times.
   function startTaskTimers() {
     taskQueue = [];
     const tasks = todoList.querySelectorAll("li");
@@ -321,7 +303,6 @@ document.addEventListener("DOMContentLoaded", function() {
     processNextTask();
   }
   
-  // Process next task in the queue.
   function processNextTask() {
     if (currentTaskIndex >= taskQueue.length) {
       timerStatus.textContent = "All tasks completed.";
@@ -358,7 +339,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }, waitTime);
   }
   
-  // Format milliseconds as mm:ss.
   function formatTime(milliseconds) {
     const seconds = Math.ceil(milliseconds / 1000);
     const mm = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -374,13 +354,16 @@ document.addEventListener("DOMContentLoaded", function() {
     startTaskTimers();
   });
   
-  // Real-time clock updater (HH:MM:SS) displayed in the #realtime div.
+  // Update real-time clock in 12-hour format with AM/PM.
   function updateRealTime() {
     const now = new Date();
-    const hh = now.getHours().toString().padStart(2, '0');
-    const mm = now.getMinutes().toString().padStart(2, '0');
-    const ss = now.getSeconds().toString().padStart(2, '0');
-    realtime.textContent = `${hh}:${mm}:${ss}`;
+    let hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    if(hours === 0) hours = 12;
+    realtime.textContent = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
   }
   
   setInterval(updateRealTime, 1000);
