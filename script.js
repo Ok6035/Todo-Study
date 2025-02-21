@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
   };
   const customMainSubjects = [];
 
-  // Flag to indicate if a task timer is running (to disable deletes via toggle, if needed)
+  // Flag to indicate if a task timer is running
   let isTimerRunning = false;
   // Array to hold tasks with timers set (each task is an li element)
   let taskQueue = [];
@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function() {
   updateSubSubjects(subject.value);
   
   // Function to create a new task element in the todo list.
-  // Each task has its own two time inputs (absolute times HH:MM) and a "Set Timer" button.
+  // Each task has its own two time inputs (HH:MM) and a "Set Timer" button.
   function createTaskElement(text, priorityValue, subjectValue, subSubjectValue) {
     const li = document.createElement('li');
     // Task details div: displays the task text and a delete button.
@@ -156,14 +156,14 @@ document.addEventListener("DOMContentLoaded", function() {
     const delButton = document.createElement('button');
     delButton.className = "delete-task";
     delButton.textContent = "Delete";
-    // Delete task event – deletion is always allowed.
+    // Delete task immediately on click.
     delButton.addEventListener('click', function() {
       li.remove();
     });
     detailsDiv.appendChild(delButton);
     li.appendChild(detailsDiv);
     
-    // Timer section for the task: two time inputs and a button to set the task timer.
+    // Timer section for the task.
     const timerDiv = document.createElement('div');
     timerDiv.className = "task-timer-section";
     timerDiv.innerHTML = `
@@ -173,12 +173,11 @@ document.addEventListener("DOMContentLoaded", function() {
       <span class="task-timer-display"></span>
     `;
     li.appendChild(timerDiv);
-    // Store the task's start and end times in dataset when timer is set.
     li.dataset.timerSet = "false";
     li.dataset.taskStart = "";
     li.dataset.taskEnd = "";
     
-    // Set Timer event for the task.
+    // Set Timer event.
     const setTimerButton = timerDiv.querySelector('.set-task-timer');
     setTimerButton.addEventListener('click', function() {
       const startInput = timerDiv.querySelector('.task-start').value;
@@ -213,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function() {
     todoText.value = "";
   });
   
-  // Disable delete buttons while timer is running.
+  // Disable delete buttons while timer is running (not used now since deletion is allowed).
   function toggleDeleteButtons(disable) {
     const deleteButtons = document.querySelectorAll(".delete-task");
     deleteButtons.forEach(btn => {
@@ -225,8 +224,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
   
-  // Beep sound function using the Web Audio API.
-  // duration in seconds, isSiren: true to use siren-like modulation.
+  // Beep sound using Web Audio API.
   function beepSound(duration, isSiren) {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioCtx.createOscillator();
@@ -257,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
   
-  // Convert a HH:MM string to a Date object (using today's date; if passed, add 1 day).
+  // Convert HH:MM string to a Date object (today; if passed, add one day).
   function getScheduledTime(timeStr) {
     let [hours, minutes] = timeStr.split(":").map(Number);
     let now = new Date();
@@ -268,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function() {
     return scheduled;
   }
   
-  // Global scheduler to process tasks sequentially based on scheduled start times.
+  // Scheduler to process tasks sequentially.
   function startTaskTimers() {
     taskQueue = [];
     const tasks = todoList.querySelectorAll("li");
@@ -281,16 +279,14 @@ document.addEventListener("DOMContentLoaded", function() {
       alert("No tasks with timer set found.");
       return;
     }
-    taskQueue.sort((a, b) => {
-      return getScheduledTime(a.dataset.taskStart) - getScheduledTime(b.dataset.taskStart);
-    });
+    taskQueue.sort((a, b) => getScheduledTime(a.dataset.taskStart) - getScheduledTime(b.dataset.taskStart));
     currentTaskIndex = 0;
     isTimerRunning = true;
     toggleDeleteButtons(true);
     processNextTask();
   }
   
-  // Process the next task in the taskQueue.
+  // Process next task in the scheduler.
   function processNextTask() {
     if (currentTaskIndex >= taskQueue.length) {
       timerStatus.textContent = "All tasks completed.";
@@ -328,7 +324,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }, waitTime);
   }
   
-  // Helper to format remaining time in mm:ss.
+  // Helper to format remaining time (mm:ss).
   function formatTime(milliseconds) {
     let seconds = Math.ceil(milliseconds / 1000);
     let mm = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -336,7 +332,6 @@ document.addEventListener("DOMContentLoaded", function() {
     return `Time Remaining: ${mm}:${ss}`;
   }
   
-  // Global Start All Timers button event.
   startAllTimersButton.addEventListener('click', function() {
     if (isTimerRunning) {
       alert("Timer is already running.");
