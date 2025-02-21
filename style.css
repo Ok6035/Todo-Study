@@ -14,7 +14,7 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Container positioned in the middle */
+/* Container positioned in the middle of the screen */
 .container {
   max-width: 800px;
   margin: 50px auto;
@@ -56,7 +56,7 @@ button:active {
   transform: translateY(2px);
 }
 
-/* Global Timer section styling */
+/* Global Timer section styling (vertical layout) */
 .global-timer {
   margin-top: 20px;
   text-align: center;
@@ -89,8 +89,10 @@ ul#todoList li {
   align-items: center;
 }
 
+/* Arrange task timer section vertically */
 .task-timer-section {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   align-items: center;
   margin-top: 5px;
@@ -122,7 +124,15 @@ button.disabled {
   pointer-events: none;
 }
 
-/* Ensure smooth touch response behavior */
-body {
-  touch-action: manipulation;
+/* Ensure no unwanted content appears on the side on phones */
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+  }
+  .todo-input, .global-timer, .task-timer-section {
+    width: 100%;
+    text-align: center;
+  }
 }
