@@ -1,0 +1,83 @@
+/* Disable text selection across the app */
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Dark theme styling */
+body {
+  background-color: #121212;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Container styling */
+.container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+/* Todo input section */
+.todo-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.todo-input input[type="text"],
+.todo-input select,
+.todo-input input[type="time"] {
+  padding: 10px;
+  border: 1px solid #555;
+  background-color: #1f1f1f;
+  color: #fff;
+  border-radius: 4px;
+}
+
+/* Blue 3D button styling */
+button {
+  padding: 10px 20px;
+  background-color: #0000ff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 4px #00008b; /* 3D effect with dark blue shadow */
+  transition: all 0.1s ease-in-out;
+}
+
+button:active {
+  box-shadow: 0 2px #00008b;
+  transform: translateY(2px);
+}
+
+/* Todo list styling */
+ul#todoList {
+  list-style: none;
+  padding: 0;
+}
+
+ul#todoList li {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #1f1f1f;
+  border-radius: 4px;
+}
+
+/* Developer text styling */
+.developer {
+  text-align: center;
+  color: red;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+/* Ensure smooth touch response behavior */
+body {
+  touch-action: manipulation;
+}
