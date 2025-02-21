@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Flag to indicate if a task timer is running (to disable deletes)
   let isTimerRunning = false;
-  // Array to hold tasks with timers set for scheduling (each task is an li element)
+  // Array to hold tasks with timers set (each task is an li element)
   let taskQueue = [];
   // Index of the current task being processed
   let currentTaskIndex = 0;
@@ -143,9 +143,7 @@ document.addEventListener("DOMContentLoaded", function() {
   updateSubSubjects(subject.value);
   
   // Function to create a new task element in the todo list.
-  // In addition to task details, each task has two time inputs: start and end time.
-  // These inputs represent the absolute clock time (HH:MM) at which the task should run.
-  // When "Set Timer" is clicked, the values are stored in the task's dataset.
+  // Each task has its own two time inputs (absolute times HH:MM) and a "Set Timer" button.
   function createTaskElement(text, priorityValue, subjectValue, subSubjectValue) {
     const li = document.createElement('li');
     // Task details div: displays the task text and a delete button.
@@ -265,13 +263,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
   
-  // Function to convert a HH:MM string to a Date object (using today's date; if the time has already passed, add one day).
+  // Function to convert a HH:MM string to a Date object (using today's date;
+  // if the time has already passed, add one day).
   function getScheduledTime(timeStr) {
     let [hours, minutes] = timeStr.split(":").map(Number);
     let now = new Date();
     let scheduled = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
     if (scheduled < now) {
-      // if time already passed, assume next day
       scheduled.setDate(scheduled.getDate() + 1);
     }
     return scheduled;
@@ -290,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function() {
       alert("No tasks with timer set found.");
       return;
     }
-    // Sort taskQueue by scheduled start time (optional; assumes tasks added in order but better safe than sorry)
+    // Sort tasks by scheduled start time.
     taskQueue.sort((a, b) => {
       return getScheduledTime(a.dataset.taskStart) - getScheduledTime(b.dataset.taskStart);
     });
@@ -300,7 +298,7 @@ document.addEventListener("DOMContentLoaded", function() {
     processNextTask();
   }
   
-  // Function to process the next task in the taskQueue.
+  // Process the next task in the taskQueue.
   function processNextTask() {
     if (currentTaskIndex >= taskQueue.length) {
       timerStatus.textContent = "All tasks completed.";
@@ -309,7 +307,7 @@ document.addEventListener("DOMContentLoaded", function() {
       return;
     }
     const currentTask = taskQueue[currentTaskIndex];
-    // Get the scheduled start and end times as Date objects.
+    // Get scheduled start and end times as Date objects.
     const scheduledStart = getScheduledTime(currentTask.dataset.taskStart);
     const scheduledEnd = getScheduledTime(currentTask.dataset.taskEnd);
     const now = new Date();
@@ -318,11 +316,10 @@ document.addEventListener("DOMContentLoaded", function() {
     if (waitTime < 0) { waitTime = 0; }
     timerStatus.textContent = `Waiting for task ${currentTaskIndex+1} to start at ${currentTask.dataset.taskStart}`;
     setTimeout(() => {
-      // When task starts, play the 5-second beep.
+      // At task start, play a 5‑second beep.
       timerStatus.textContent = `Task ${currentTaskIndex+1} starting...`;
       beepSound(5, false);
       setTimeout(() => {
-        // Start countdown for the task until its end time.
         let interval = setInterval(() => {
           let nowTime = new Date();
           let remaining = Math.max(0, scheduledEnd - nowTime);
@@ -330,9 +327,8 @@ document.addEventListener("DOMContentLoaded", function() {
           if (remaining <= 0) {
             clearInterval(interval);
             timerStatus.textContent = `Task ${currentTaskIndex+1} time over!`;
-            // Play 10-second siren beep.
+            // Play 10‑second siren beep when the task ends.
             beepSound(10, true);
-            // Mark task as completed (e.g., grey it out)
             currentTask.style.opacity = 0.5;
             setTimeout(() => {
               currentTaskIndex++;
@@ -344,7 +340,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }, waitTime);
   }
   
-  // Helper function to format time in mm:ss format.
+  // Helper function to format milliseconds into mm:ss.
   function formatTime(milliseconds) {
     let seconds = Math.ceil(milliseconds / 1000);
     let mm = Math.floor(seconds / 60).toString().padStart(2, '0');
