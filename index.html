@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Todo App with Timer</title>
+  <title>Todo App with Task Timers</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Main app container in the middle of the page -->
   <div class="container">
       <h1>Todo App</h1>
+      <!-- Todo & Task Input Section -->
       <div class="todo-input">
          <input type="text" id="todoText" placeholder="Enter your todo...">
          <select id="priority">
@@ -24,21 +26,21 @@
              <option value="ADD_MORE">Add More</option>
          </select>
          <button id="deleteSubject">Delete Subject</button>
-         <!-- Sub-Subject dropdown includes option to add more custom sub subjects -->
+         <!-- Sub-Subject dropdown with Add More option -->
          <select id="subSubject">
              <option value="None">Select Sub-Subject</option>
          </select>
          <button id="deleteSubSubject">Delete Sub-Subject</button>
          <button id="addTodo">Add Todo</button>
       </div>
+      <!-- Todo List: Each task will appear here with its own timer inputs -->
       <ul id="todoList"></ul>
       <hr>
-      <div class="timer">
-         <h2>Study Timer</h2>
-         <label>Start Time: <input type="time" id="startTime"></label>
-         <label>End Time: <input type="time" id="endTime"></label>
-         <button id="startTimer">Start Timer</button>
-         <div id="timerStatus"></div>
+      <!-- Global Timer Section for Sequential Task Timers -->
+      <div class="global-timer">
+         <h2>Task Timer Status</h2>
+         <button id="startAllTimers">Start All Timers</button>
+         <div id="timerStatus">No Task Running</div>
       </div>
   </div>
   <p class="developer"><strong>Developed by: KhanOsama</strong></p>
