@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
     defaultOption.value = "None";
     defaultOption.textContent = "Select Sub-Subject";
     subSubject.appendChild(defaultOption);
-    
+
     const subs = subSubjectsMapping[selectedSubject] || [];
     subs.forEach(function(item) {
       const option = document.createElement('option');
@@ -136,15 +136,18 @@ document.addEventListener("DOMContentLoaded", function() {
   
   updateSubSubjects(subject.value);
   
-  // Create a task element (storing timer info if available)
+  // Create a task element. The timer inputs are now in 12-hour format: a text input (HH:MM) and a select for AM/PM.
   function createTaskElement(text, priorityValue, subjectValue, subSubjectValue, timerSet = false, taskStart = "", taskEnd = "") {
     const li = document.createElement('li');
+    
+    // Task details 
     const detailsDiv = document.createElement('div');
     detailsDiv.className = "task-details";
     const taskSpan = document.createElement('span');
     taskSpan.className = "task-text";
     taskSpan.textContent = `Todo: ${text} | Priority: ${priorityValue} | Subject: ${subjectValue} | Sub-Subject: ${subSubjectValue}`;
     detailsDiv.appendChild(taskSpan);
+    
     const delButton = document.createElement('button');
     delButton.className = "delete-task";
     delButton.textContent = "Delete";
@@ -158,18 +161,32 @@ document.addEventListener("DOMContentLoaded", function() {
     detailsDiv.appendChild(delButton);
     li.appendChild(detailsDiv);
     
+    // Timer section: using text input plus AM/PM selectors.
     const timerDiv = document.createElement('div');
     timerDiv.className = "task-timer-section";
     timerDiv.innerHTML = `
-      <label>Start Time: <input type="time" class="task-start"></label>
-      <label>End Time: <input type="time" class="task-end"></label>
+      <label>Start Time: 
+         <input type="text" class="task-start" placeholder="HH:MM">
+         <select class="task-start-ampm">
+             <option value="AM">AM</option>
+             <option value="PM">PM</option>
+         </select>
+      </label>
+      <label>End Time: 
+         <input type="text" class="task-end" placeholder="HH:MM">
+         <select class="task-end-ampm">
+             <option value="AM">AM</option>
+             <option value="PM">PM</option>
+         </select>
+      </label>
       <button class="set-task-timer">Set Timer</button>
       <span class="task-timer-display"></span>
     `;
     li.appendChild(timerDiv);
+    
     li.dataset.timerSet = timerSet ? "true" : "false";
-    li.dataset.taskStart = taskStart;
-    li.dataset.taskEnd = taskEnd;
+    li.dataset.taskStart = taskStart; // expected format: "HH:MM AM" (or PM)
+    li.dataset.taskEnd = taskEnd;     // expected format: "HH:MM AM" (or PM)
     
     if (timerSet) {
       const displaySpan = timerDiv.querySelector('.task-timer-display');
@@ -178,21 +195,28 @@ document.addEventListener("DOMContentLoaded", function() {
     
     const setTimerButton = timerDiv.querySelector('.set-task-timer');
     setTimerButton.addEventListener('click', function() {
-      const startInput = timerDiv.querySelector('.task-start').value;
-      const endInput = timerDiv.querySelector('.task-end').value;
-      if (!startInput || !endInput) {
-        alert("Please set both start and end times for the task.");
+      const startTimeInput = timerDiv.querySelector('.task-start').value;
+      const startAmpmSelect = timerDiv.querySelector('.task-start-ampm').value;
+      const endTimeInput = timerDiv.querySelector('.task-end').value;
+      const endAmpmSelect = timerDiv.querySelector('.task-end-ampm').value;
+      if (!startTimeInput || !endTimeInput) {
+        alert("Please set both start and end times for the task in HH:MM format.");
         return;
       }
-      if (endInput <= startInput) {
-        alert("End time must be after start time.");
+      // Validate format (basic check)
+      if (!/^\d{1,2}:\d{2}$/.test(startTimeInput) || !/^\d{1,2}:\d{2}$/.test(endTimeInput)) {
+        alert("Please enter time in HH:MM format.");
         return;
       }
+      // Build time strings in format "HH:MM AM" (or PM)
+      const startTimeStr = startTimeInput.trim() + " " + startAmpmSelect;
+      const endTimeStr = endTimeInput.trim() + " " + endAmpmSelect;
+      // Basic check: you can add further validation if desired.
       li.dataset.timerSet = "true";
-      li.dataset.taskStart = startInput;
-      li.dataset.taskEnd = endInput;
+      li.dataset.taskStart = startTimeStr;
+      li.dataset.taskEnd = endTimeStr;
       const displaySpan = timerDiv.querySelector('.task-timer-display');
-      displaySpan.textContent = `Timer set: ${startInput} to ${endInput}`;
+      displaySpan.textContent = `Timer set: ${startTimeStr} to ${endTimeStr}`;
       saveTasksToLocalStorage();
     });
     
@@ -274,8 +298,18 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
   
+  // Parse a 12-hour time string "HH:MM AM/PM" to a Date object (today; if passed, assume next day)
   function getScheduledTime(timeStr) {
-    const [hours, minutes] = timeStr.split(":").map(Number);
+    // Expected format: "HH:MM AM" or "HH:MM PM"
+    const parts = timeStr.trim().split(" ");
+    if (parts.length !== 2) return null;
+    const timePart = parts[0];
+    const period = parts[1].toUpperCase();
+    const timeParts = timePart.split(":");
+    let hours = parseInt(timeParts[0], 10);
+    const minutes = parseInt(timeParts[1], 10);
+    if (period === "PM" && hours < 12) hours += 12;
+    if (period === "AM" && hours === 12) hours = 0;
     const now = new Date();
     const scheduled = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
     if (scheduled < now) {
