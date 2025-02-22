@@ -36,9 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // Toggle dark mode function
   function toggleDarkMode() {
     document.body.classList.toggle("dark-mode");
-    // Optionally store preference in localStorage
     localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
-    // Change icon based on mode: 🌙 for dark mode off, ☀️ for dark mode on.
     darkModeToggle.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
   }
 
@@ -181,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function() {
     detailsDiv.appendChild(delButton);
     li.appendChild(detailsDiv);
     
-    // Timer section using text inputs and AM/PM selectors for start and end times
+    // Timer section with text inputs and AM/PM selectors
     const timerDiv = document.createElement('div');
     timerDiv.className = "task-timer-section";
     timerDiv.innerHTML = `
@@ -205,8 +203,8 @@ document.addEventListener("DOMContentLoaded", function() {
     li.appendChild(timerDiv);
     
     li.dataset.timerSet = timerSet ? "true" : "false";
-    li.dataset.taskStart = taskStart; // Expected format "HH:MM AM/PM"
-    li.dataset.taskEnd = taskEnd;     // Expected format "HH:MM AM/PM"
+    li.dataset.taskStart = taskStart;
+    li.dataset.taskEnd = taskEnd;
     
     if (timerSet) {
       const displaySpan = timerDiv.querySelector('.task-timer-display');
@@ -404,7 +402,7 @@ document.addEventListener("DOMContentLoaded", function() {
     startTaskTimers();
   });
   
-  // Update real-time clock in 12-hour format with AM/PM.
+  // Update real-time clock in 12-hour format with AM/PM
   function updateRealTime() {
     const now = new Date();
     let hours = now.getHours();
