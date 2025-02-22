@@ -8,12 +8,13 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Header with Todo App text and real time clock on right -->
+  <!-- Header with Todo App text on left and real time clock (in 12-hr format) on right -->
   <header class="app-header">
-    <h1>Todo App</h1>
-    <div id="realtime"></div>
+      <h1>Todo App</h1>
+      <div id="realtime"></div>
   </header>
-  <!-- Main app container centered in the middle -->
+  
+  <!-- Main app container -->
   <div class="container">
       <!-- Todo & Task Input Section -->
       <div class="todo-input">
@@ -38,9 +39,11 @@
          <button id="deleteSubSubject">Delete Sub-Subject</button>
          <button id="addTodo">Add Todo</button>
       </div>
+      
       <!-- Todo List: Each task will appear here with its own timer inputs -->
       <ul id="todoList"></ul>
       <hr>
+      
       <!-- Global Timer Section for Sequential Task Timers -->
       <div class="global-timer">
          <h2>Task Timer Status</h2>
@@ -49,10 +52,11 @@
          <div id="timerStatus">No Task Running</div>
       </div>
   </div>
+
   <!-- Footer with Developer info -->
-  <div class="footer">
+  <footer class="footer">
       <p class="developer"><strong>Developed by: KhanOsama</strong></p>
-  </div>
+  </footer>
   <script src="script.js"></script>
 </body>
 </html>
