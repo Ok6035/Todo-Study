@@ -11,12 +11,19 @@ html, body {
   touch-action: pan-y;
 }
 
-/* Beautiful gradient background */
+/* Base styles for light mode with a beautiful gradient background */
 body {
   background: linear-gradient(135deg, #f8cdda, #1c92d2);
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles: applied when .dark-mode is added to body */
+body.dark-mode {
+  background: linear-gradient(135deg, #2c3e50, #4ca1af);
+  color: #e0e0e0;
 }
 
 /* App header styling with flex layout */
@@ -26,7 +33,12 @@ body {
   align-items: center;
   padding: 20px 40px;
   background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px #00008b;
+  transition: background 0.3s ease;
+}
+
+body.dark-mode .app-header {
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .app-header h1 {
@@ -35,7 +47,7 @@ body {
   font-size: 2em;
 }
 
-/* Real-time clock styling: appears on the right in the header */
+/* Real-time clock styling: appears on the header */
 #realtime {
   background-color: rgba(255, 255, 255, 0.8);
   color: #333;
@@ -44,9 +56,28 @@ body {
   border-radius: 4px;
   box-shadow: 0 4px rgba(0,0,0,0.1);
   font-size: 1.2em;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Main container */
+body.dark-mode #realtime {
+  background-color: rgba(0,0,0,0.8);
+  color: #e0e0e0;
+  border-color: #555;
+}
+
+/* Dark mode toggle button styling */
+.dark-mode-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.dark-mode-toggle:active {
+  transform: scale(0.9);
+}
+
+/* Main container styling */
 .container {
   max-width: 800px;
   margin: 30px auto;
@@ -54,6 +85,11 @@ body {
   background-color: rgba(255,255,255,0.85);
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease;
+}
+
+body.dark-mode .container {
+  background-color: rgba(0,0,0,0.75);
 }
 
 /* Todo input section styling */
@@ -72,17 +108,24 @@ body {
   background-color: #fff;
   color: #333;
   border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* General 3D button styling in light colours */
+body.dark-mode .todo-input input[type="text"],
+body.dark-mode .todo-input select {
+  background-color: #333;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+
+/* General button styling in light colours with 3D effect */
 button {
   padding: 10px 20px;
-  background-color: #f9f9f9;  /* light background */
+  background-color: #f9f9f9;
   color: #333;
   border: 1px solid #ddd;
   cursor: pointer;
   border-radius: 4px;
-  /* 3D light shadow */
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   transition: all 0.1s ease-in-out;
 }
@@ -96,13 +139,30 @@ button:active {
 #deleteSubject,
 #deleteSubSubject,
 .delete-task {
-  background-color: #ffcccc; /* light red */
+  background-color: #ffcccc;
   border: 1px solid #ff6666;
 }
 
 #startAllTimers {
-  background-color: #ccffcc; /* light green */
+  background-color: #ccffcc;
   border: 1px solid #66ff66;
+}
+
+/* Adjust buttons in dark mode */
+body.dark-mode button {
+  background-color: #444;
+  color: #eee;
+  border: 1px solid #666;
+}
+body.dark-mode #deleteSubject,
+body.dark-mode #deleteSubSubject,
+body.dark-mode .delete-task {
+  background-color: #ff6666;
+  border: 1px solid #ff3333;
+}
+body.dark-mode #startAllTimers {
+  background-color: #66ff66;
+  border: 1px solid #33ff33;
 }
 
 /* Global Timer section styling (vertical layout) */
@@ -115,6 +175,11 @@ button:active {
   margin-top: 10px;
   font-size: 1.2em;
   color: #333;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode #timerStatus {
+  color: #e0e0e0;
 }
 
 /* Todo list styling */
@@ -131,6 +196,11 @@ ul#todoList li {
   display: flex;
   flex-direction: column;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease;
+}
+
+body.dark-mode ul#todoList li {
+  background-color: #333;
 }
 
 /* Task details and controls */
@@ -143,10 +213,15 @@ ul#todoList li {
 
 .task-details .task-text {
   color: #333;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .task-details .task-text {
+  color: #e0e0e0;
 }
 
 /* Arrange task timer section vertically */
-/* Update timer inputs to use 12-hour format: text input + AM/PM selector */
+/* Timer inputs using 12-hour text input and AM/PM select */
 .task-timer-section {
   display: flex;
   flex-direction: column;
@@ -159,6 +234,10 @@ ul#todoList li {
   color: #333;
 }
 
+body.dark-mode .task-timer-section label {
+  color: #e0e0e0;
+}
+
 .task-timer-section input[type="text"] {
   padding: 5px;
   border: 1px solid #ccc;
@@ -167,6 +246,13 @@ ul#todoList li {
   border-radius: 4px;
   width: 80px;
   text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode .task-timer-section input[type="text"] {
+  background-color: #555;
+  color: #e0e0e0;
+  border: 1px solid #777;
 }
 
 .task-timer-section select {
@@ -175,6 +261,13 @@ ul#todoList li {
   background-color: #fff;
   color: #333;
   border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode .task-timer-section select {
+  background-color: #555;
+  color: #e0e0e0;
+  border: 1px solid #777;
 }
 
 /* Footer styling */
@@ -187,26 +280,4 @@ ul#todoList li {
   color: #ff6666;
   font-weight: bold;
   margin: 0;
-}
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  .app-header {
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px 10px;
-  }
-  .container {
-    width: 90%;
-    margin: 0 auto;
-    padding: 10px;
-  }
-  .todo-input, .global-timer, .task-timer-section {
-    width: 100%;
-    text-align: center;
-  }
-  #realtime {
-    padding: 5px 10px;
-    font-size: 1em;
-  }
 }
