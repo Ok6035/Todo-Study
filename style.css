@@ -23,7 +23,7 @@ body {
 /* Dark mode styles: applied when .dark-mode is added to body */
 body.dark-mode {
   background: linear-gradient(135deg, #2c3e50, #4ca1af);
-  color: #e0e0e0;
+  color: #fff;
 }
 
 /* App header styling with flex layout */
@@ -34,6 +34,7 @@ body.dark-mode {
   padding: 20px 40px;
   background: rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px #00008b;
+  position: relative;
   transition: background 0.3s ease;
 }
 
@@ -47,29 +48,32 @@ body.dark-mode .app-header {
   font-size: 2em;
 }
 
-/* Real-time clock styling: appears on the header */
+/* Real-time clock styling: appears in the header */
 #realtime {
   background-color: rgba(255, 255, 255, 0.8);
   color: #333;
   padding: 10px 20px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  box-shadow: 0 4px rgba(0,0,0,0.1);
+  box-shadow: 0 4px rgba(0, 0, 0, 0.1);
   font-size: 1.2em;
   transition: background 0.3s ease, color 0.3s ease;
 }
 
 body.dark-mode #realtime {
-  background-color: rgba(0,0,0,0.8);
-  color: #e0e0e0;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff; /* in dark mode, make the real-time text white */
   border-color: #555;
 }
 
-/* Dark mode toggle button styling */
+/* Dark mode toggle button: small and positioned in the top left corner */
 .dark-mode-toggle {
+  position: absolute;
+  top: 10px;
+  left: 10px;
   background: none;
   border: none;
-  font-size: 1.5em;
+  font-size: 1em;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -82,14 +86,14 @@ body.dark-mode #realtime {
   max-width: 800px;
   margin: 30px auto;
   padding: 20px;
-  background-color: rgba(255,255,255,0.85);
+  background-color: rgba(255, 255, 255, 0.85);
   border-radius: 8px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease;
 }
 
 body.dark-mode .container {
-  background-color: rgba(0,0,0,0.75);
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 /* Todo input section styling */
@@ -126,12 +130,12 @@ button {
   border: 1px solid #ddd;
   cursor: pointer;
   border-radius: 4px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.1s ease-in-out;
 }
 
 button:active {
-  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
   transform: translateY(2px);
 }
 
@@ -146,6 +150,7 @@ button:active {
 #startAllTimers {
   background-color: #ccffcc;
   border: 1px solid #66ff66;
+  color: #333;
 }
 
 /* Adjust buttons in dark mode */
@@ -163,6 +168,7 @@ body.dark-mode .delete-task {
 body.dark-mode #startAllTimers {
   background-color: #66ff66;
   border: 1px solid #33ff33;
+  color: #000;
 }
 
 /* Global Timer section styling (vertical layout) */
@@ -179,7 +185,7 @@ body.dark-mode #startAllTimers {
 }
 
 body.dark-mode #timerStatus {
-  color: #e0e0e0;
+  color: #fff; /* in dark mode, task timer status text is white */
 }
 
 /* Todo list styling */
@@ -195,7 +201,7 @@ ul#todoList li {
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
 
@@ -217,11 +223,10 @@ body.dark-mode ul#todoList li {
 }
 
 body.dark-mode .task-details .task-text {
-  color: #e0e0e0;
+  color: #fff;
 }
 
-/* Arrange task timer section vertically */
-/* Timer inputs using 12-hour text input and AM/PM select */
+/* Arrange task timer section vertically - timer inputs using 12-hour text input and AM/PM select */
 .task-timer-section {
   display: flex;
   flex-direction: column;
@@ -235,7 +240,7 @@ body.dark-mode .task-details .task-text {
 }
 
 body.dark-mode .task-timer-section label {
-  color: #e0e0e0;
+  color: #ccc;
 }
 
 .task-timer-section input[type="text"] {
@@ -251,7 +256,7 @@ body.dark-mode .task-timer-section label {
 
 body.dark-mode .task-timer-section input[type="text"] {
   background-color: #555;
-  color: #e0e0e0;
+  color: #eee;
   border: 1px solid #777;
 }
 
@@ -266,7 +271,7 @@ body.dark-mode .task-timer-section input[type="text"] {
 
 body.dark-mode .task-timer-section select {
   background-color: #555;
-  color: #e0e0e0;
+  color: #eee;
   border: 1px solid #777;
 }
 
@@ -280,4 +285,9 @@ body.dark-mode .task-timer-section select {
   color: #ff6666;
   font-weight: bold;
   margin: 0;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .developer {
+  color: #000;
 }
