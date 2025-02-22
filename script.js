@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const startAllTimersButton = document.getElementById('startAllTimers');
   const timerStatus = document.getElementById('timerStatus');
   const realtime = document.getElementById('realtime');
+  const darkModeToggle = document.getElementById('darkModeToggle');
 
   // Default subjects and mappings
   const defaultMainSubjects = ["STATISTICS", "MATHEMATICS", "ECONOMICS"];
@@ -32,6 +33,25 @@ document.addEventListener("DOMContentLoaded", function() {
   let currentTaskIndex = 0;
   let countdownIntervalId = null;
 
+  // Toggle dark mode function
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+    // Optionally store preference in localStorage
+    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+    // Change icon based on mode: 🌙 for dark mode off, ☀️ for dark mode on.
+    darkModeToggle.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
+  }
+
+  // Check stored preference for dark mode
+  if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark-mode");
+    darkModeToggle.textContent = "☀️";
+  } else {
+    darkModeToggle.textContent = "🌙";
+  }
+
+  darkModeToggle.addEventListener("click", toggleDarkMode);
+
   // Update sub-subject dropdown based on selected subject
   function updateSubSubjects(selectedSubject) {
     subSubject.innerHTML = "";
@@ -39,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function() {
     defaultOption.value = "None";
     defaultOption.textContent = "Select Sub-Subject";
     subSubject.appendChild(defaultOption);
-
+    
     const subs = subSubjectsMapping[selectedSubject] || [];
     subs.forEach(function(item) {
       const option = document.createElement('option');
@@ -136,11 +156,11 @@ document.addEventListener("DOMContentLoaded", function() {
   
   updateSubSubjects(subject.value);
   
-  // Create a task element. The timer inputs are now in 12-hour format: a text input (HH:MM) and a select for AM/PM.
+  // Create a task element with timer inputs in 12-hour format
   function createTaskElement(text, priorityValue, subjectValue, subSubjectValue, timerSet = false, taskStart = "", taskEnd = "") {
     const li = document.createElement('li');
     
-    // Task details 
+    // Task details
     const detailsDiv = document.createElement('div');
     detailsDiv.className = "task-details";
     const taskSpan = document.createElement('span');
@@ -161,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function() {
     detailsDiv.appendChild(delButton);
     li.appendChild(detailsDiv);
     
-    // Timer section: using text input plus AM/PM selectors.
+    // Timer section using text inputs and AM/PM selectors for start and end times
     const timerDiv = document.createElement('div');
     timerDiv.className = "task-timer-section";
     timerDiv.innerHTML = `
@@ -185,8 +205,8 @@ document.addEventListener("DOMContentLoaded", function() {
     li.appendChild(timerDiv);
     
     li.dataset.timerSet = timerSet ? "true" : "false";
-    li.dataset.taskStart = taskStart; // expected format: "HH:MM AM" (or PM)
-    li.dataset.taskEnd = taskEnd;     // expected format: "HH:MM AM" (or PM)
+    li.dataset.taskStart = taskStart; // Expected format "HH:MM AM/PM"
+    li.dataset.taskEnd = taskEnd;     // Expected format "HH:MM AM/PM"
     
     if (timerSet) {
       const displaySpan = timerDiv.querySelector('.task-timer-display');
@@ -203,15 +223,12 @@ document.addEventListener("DOMContentLoaded", function() {
         alert("Please set both start and end times for the task in HH:MM format.");
         return;
       }
-      // Validate format (basic check)
       if (!/^\d{1,2}:\d{2}$/.test(startTimeInput) || !/^\d{1,2}:\d{2}$/.test(endTimeInput)) {
         alert("Please enter time in HH:MM format.");
         return;
       }
-      // Build time strings in format "HH:MM AM" (or PM)
       const startTimeStr = startTimeInput.trim() + " " + startAmpmSelect;
       const endTimeStr = endTimeInput.trim() + " " + endAmpmSelect;
-      // Basic check: you can add further validation if desired.
       li.dataset.timerSet = "true";
       li.dataset.taskStart = startTimeStr;
       li.dataset.taskEnd = endTimeStr;
@@ -300,16 +317,15 @@ document.addEventListener("DOMContentLoaded", function() {
   
   // Parse a 12-hour time string "HH:MM AM/PM" to a Date object (today; if passed, assume next day)
   function getScheduledTime(timeStr) {
-    // Expected format: "HH:MM AM" or "HH:MM PM"
     const parts = timeStr.trim().split(" ");
     if (parts.length !== 2) return null;
-    const timePart = parts[0];
-    const period = parts[1].toUpperCase();
+    const [timePart, period] = parts;
     const timeParts = timePart.split(":");
     let hours = parseInt(timeParts[0], 10);
     const minutes = parseInt(timeParts[1], 10);
-    if (period === "PM" && hours < 12) hours += 12;
-    if (period === "AM" && hours === 12) hours = 0;
+    const periodUpper = period.toUpperCase();
+    if (periodUpper === "PM" && hours < 12) hours += 12;
+    if (periodUpper === "AM" && hours === 12) hours = 0;
     const now = new Date();
     const scheduled = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
     if (scheduled < now) {
