@@ -11,46 +11,49 @@ html, body {
   touch-action: pan-y;
 }
 
-/* Dark theme styling */
+/* Beautiful gradient background */
 body {
-  background-color: #121212;
-  color: #ffffff;
+  background: linear-gradient(135deg, #f8cdda, #1c92d2);
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Header styling with flex layout */
+/* App header styling with flex layout */
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
-  background-color: #1f1f1f;
-  box-shadow: 0 4px #00008b;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .app-header h1 {
   margin: 0;
-}
-
-/* Real-time clock styling: displayed on the right side of the header */
-#realtime {
-  font-size: 1.2em;
-  background-color: #121212;
   color: #ffffff;
-  padding: 10px 20px;
-  border: 2px solid #ffffff;
-  border-radius: 4px;
-  box-shadow: 0 4px #00008b;
-  text-align: center;
+  font-size: 2em;
 }
 
-/* Container centered on the screen */
+/* Real-time clock styling: appears on the right in the header */
+#realtime {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px rgba(0,0,0,0.1);
+  font-size: 1.2em;
+}
+
+/* Main container */
 .container {
   max-width: 800px;
-  margin: 20px auto 20px auto;
+  margin: 30px auto;
   padding: 20px;
+  background-color: rgba(255,255,255,0.85);
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
 /* Todo input section styling */
@@ -65,41 +68,41 @@ body {
 .todo-input input[type="text"],
 .todo-input select {
   padding: 10px;
-  border: 1px solid #555;
-  background-color: #1f1f1f;
-  color: #fff;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
   border-radius: 4px;
 }
 
-/* General 3D button styling */
+/* General 3D button styling in light colours */
 button {
   padding: 10px 20px;
-  background-color: #0000ff;  /* default blue */
-  color: #fff;
-  border: none;
+  background-color: #f9f9f9;  /* light background */
+  color: #333;
+  border: 1px solid #ddd;
   cursor: pointer;
   border-radius: 4px;
-  /* 3D effect */
-  box-shadow: 0 4px #00008b;
+  /* 3D light shadow */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   transition: all 0.1s ease-in-out;
 }
 
 button:active {
-  box-shadow: 0 2px #00008b;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
   transform: translateY(2px);
 }
 
-/* Specific button colors */
+/* Specific button colours */
 #deleteSubject,
 #deleteSubSubject,
 .delete-task {
-  background-color: red;
-  border: 2px solid darkred;
+  background-color: #ffcccc; /* light red */
+  border: 1px solid #ff6666;
 }
 
 #startAllTimers {
-  background-color: green;
-  border: 2px solid darkgreen;
+  background-color: #ccffcc; /* light green */
+  border: 1px solid #66ff66;
 }
 
 /* Global Timer section styling (vertical layout) */
@@ -111,6 +114,7 @@ button:active {
 #timerStatus {
   margin-top: 10px;
   font-size: 1.2em;
+  color: #333;
 }
 
 /* Todo list styling */
@@ -122,10 +126,11 @@ ul#todoList {
 ul#todoList li {
   padding: 10px;
   margin: 10px 0;
-  background-color: #1f1f1f;
+  background-color: #fff;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 /* Task details and controls */
@@ -133,26 +138,42 @@ ul#todoList li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 10px;
+}
+
+.task-details .task-text {
+  color: #333;
 }
 
 /* Arrange task timer section vertically */
+/* Update timer inputs to use 12-hour format: text input + AM/PM selector */
 .task-timer-section {
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
-  margin-top: 5px;
 }
 
 .task-timer-section label {
   font-size: 0.9em;
+  color: #333;
 }
 
-.task-timer-section input[type="time"] {
+.task-timer-section input[type="text"] {
   padding: 5px;
-  border: 1px solid #555;
-  background-color: #1f1f1f;
-  color: #fff;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  border-radius: 4px;
+  width: 80px;
+  text-align: center;
+}
+
+.task-timer-section select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
   border-radius: 4px;
 }
 
@@ -162,13 +183,13 @@ ul#todoList li {
   margin: 20px 0;
 }
 
-/* Developer text styling */
 .developer {
-  color: red;
+  color: #ff6666;
   font-weight: bold;
+  margin: 0;
 }
 
-/* Ensure no unwanted content appears on the side on phones */
+/* Responsive adjustments */
 @media (max-width: 600px) {
   .app-header {
     flex-direction: column;
@@ -176,7 +197,7 @@ ul#todoList li {
     padding: 20px 10px;
   }
   .container {
-    width: 100%;
+    width: 90%;
     margin: 0 auto;
     padding: 10px;
   }
