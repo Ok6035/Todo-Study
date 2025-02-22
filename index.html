@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <!-- Disable zooming and restrict touch actions -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
   <title>Todo App with Task Timers and Dark Mode</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Header with Todo App text on left, real time clock in center and dark mode toggle on right -->
+  <!-- Header with Todo App text on left, real-time clock in center,
+       and dark mode toggle on the top left corner -->
   <header class="app-header">
+    <button id="darkModeToggle" class="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
     <h1>Todo App</h1>
     <div id="realtime"></div>
-    <button id="darkModeToggle" class="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
   </header>
   
   <!-- Main app container -->
   <div class="container">
       <!-- Todo & Task Input Section -->
       <div class="todo-input">
-         <input type="text" id="todoText" placeholder="Enter your todo...">
+         <input type="text" id="todoText" placeholder="Enter your todo..." />
          <select id="priority">
              <option value="High">High</option>
              <option value="Medium" selected>Medium</option>
@@ -43,7 +44,7 @@
       
       <!-- Todo List: Each task will appear here with its own timer inputs -->
       <ul id="todoList"></ul>
-      <hr>
+      <hr />
       
       <!-- Global Timer Section for Sequential Task Timers -->
       <div class="global-timer">
