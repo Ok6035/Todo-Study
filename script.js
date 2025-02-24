@@ -1,29 +1,29 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   // Elements for task creation and subject controls
-  const todoText = document.getElementById('todoText');
-  const priority = document.getElementById('priority');
-  const subject = document.getElementById('subject');
-  const subSubject = document.getElementById('subSubject');
-  const addTodoButton = document.getElementById('addTodo');
-  const deleteSubjectButton = document.getElementById('deleteSubject');
-  const deleteSubSubjectButton = document.getElementById('deleteSubSubject');
-  const todoList = document.getElementById('todoList');
-  const startAllTimersButton = document.getElementById('startAllTimers');
-  const timerStatus = document.getElementById('timerStatus');
-  const realtime = document.getElementById('realtime');
-  const darkModeToggle = document.getElementById('darkModeToggle');
+  const todoText = document.getElementById("todoText");
+  const priority = document.getElementById("priority");
+  const subject = document.getElementById("subject");
+  const subSubject = document.getElementById("subSubject");
+  const addTodoButton = document.getElementById("addTodo");
+  const deleteSubjectButton = document.getElementById("deleteSubject");
+  const deleteSubSubjectButton = document.getElementById("deleteSubSubject");
+  const todoList = document.getElementById("todoList");
+  const startAllTimersButton = document.getElementById("startAllTimers");
+  const timerStatus = document.getElementById("timerStatus");
+  const realtime = document.getElementById("realtime");
+  const darkModeToggle = document.getElementById("darkModeToggle");
 
   // Default subjects and mappings
   const defaultMainSubjects = ["STATISTICS", "MATHEMATICS", "ECONOMICS"];
   const subSubjectsMapping = {
-    "STATISTICS": ["Probability", "Data Analysis", "Inferential"],
-    "MATHEMATICS": ["Algebra", "Calculus", "Geometry"],
-    "ECONOMICS": ["Microeconomics", "Macroeconomics", "Econometrics"]
+    STATISTICS: ["Probability", "Data Analysis", "Inferential"],
+    MATHEMATICS: ["Algebra", "Calculus", "Geometry"],
+    ECONOMICS: ["Microeconomics", "Macroeconomics", "Econometrics"],
   };
   const customSubs = {
-    "STATISTICS": [],
-    "MATHEMATICS": [],
-    "ECONOMICS": []
+    STATISTICS: [],
+    MATHEMATICS: [],
+    ECONOMICS: [],
   };
   const customMainSubjects = [];
 
@@ -53,31 +53,31 @@ document.addEventListener("DOMContentLoaded", function() {
   // Update sub-subject dropdown based on selected subject
   function updateSubSubjects(selectedSubject) {
     subSubject.innerHTML = "";
-    const defaultOption = document.createElement('option');
+    const defaultOption = document.createElement("option");
     defaultOption.value = "None";
     defaultOption.textContent = "Select Sub-Subject";
     subSubject.appendChild(defaultOption);
-    
+
     const subs = subSubjectsMapping[selectedSubject] || [];
-    subs.forEach(function(item) {
-      const option = document.createElement('option');
+    subs.forEach(function (item) {
+      const option = document.createElement("option");
       option.value = item;
       option.textContent = item;
       subSubject.appendChild(option);
     });
-    (customSubs[selectedSubject] || []).forEach(function(item) {
-      const option = document.createElement('option');
+    (customSubs[selectedSubject] || []).forEach(function (item) {
+      const option = document.createElement("option");
       option.value = item;
       option.textContent = item;
       subSubject.appendChild(option);
     });
-    const addMoreOption = document.createElement('option');
+    const addMoreOption = document.createElement("option");
     addMoreOption.value = "ADD_MORE";
     addMoreOption.textContent = "Add More";
     subSubject.appendChild(addMoreOption);
   }
-  
-  subSubject.addEventListener('change', function() {
+
+  subSubject.addEventListener("change", function () {
     if (subSubject.value === "ADD_MORE") {
       const customSub = prompt("Enter custom sub-subject:");
       const currentSubject = subject.value;
@@ -92,13 +92,13 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
   });
-  
-  subject.addEventListener('change', function() {
+
+  subject.addEventListener("change", function () {
     if (subject.value === "ADD_MORE") {
       const customMain = prompt("Enter custom subject:");
       if (customMain && customMain.trim() !== "") {
         customMainSubjects.push(customMain.trim());
-        const newOption = document.createElement('option');
+        const newOption = document.createElement("option");
         newOption.value = customMain.trim();
         newOption.textContent = customMain.trim();
         subject.insertBefore(newOption, subject.lastElementChild);
@@ -111,8 +111,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     updateSubSubjects(subject.value);
   });
-  
-  deleteSubjectButton.addEventListener('click', function() {
+
+  deleteSubjectButton.addEventListener("click", function () {
     const selected = subject.value;
     if (defaultMainSubjects.includes(selected)) {
       alert("Default subjects cannot be deleted.");
@@ -134,13 +134,19 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
   });
-  
-  deleteSubSubjectButton.addEventListener('click', function() {
+
+  deleteSubSubjectButton.addEventListener("click", function () {
     const currentSubject = subject.value;
     const selectedSub = subSubject.value;
-    if ((subSubjectsMapping[currentSubject] && subSubjectsMapping[currentSubject].includes(selectedSub))) {
+    if (
+      subSubjectsMapping[currentSubject] &&
+      subSubjectsMapping[currentSubject].includes(selectedSub)
+    ) {
       alert("Default sub-subjects cannot be deleted.");
-    } else if (customSubs[currentSubject] && customSubs[currentSubject].includes(selectedSub)) {
+    } else if (
+      customSubs[currentSubject] &&
+      customSubs[currentSubject].includes(selectedSub)
+    ) {
       if (confirm(`Delete sub-subject "${selectedSub}"?`)) {
         const index = customSubs[currentSubject].indexOf(selectedSub);
         if (index !== -1) customSubs[currentSubject].splice(index, 1);
@@ -151,25 +157,54 @@ document.addEventListener("DOMContentLoaded", function() {
       alert("Please select a custom sub-subject to delete.");
     }
   });
-  
+
   updateSubSubjects(subject.value);
-  
+
   // Create a task element with timer inputs in 12-hour format
-  function createTaskElement(text, priorityValue, subjectValue, subSubjectValue, timerSet = false, taskStart = "", taskEnd = "") {
-    const li = document.createElement('li');
-    
+  function createTaskElement(
+    text,
+    priorityValue,
+    subjectValue,
+    subSubjectValue,
+    timerSet = false,
+    taskStart = "",
+    taskEnd = ""
+  ) {
+    const li = document.createElement("li");
+
     // Task details
-    const detailsDiv = document.createElement('div');
+    const detailsDiv = document.createElement("div");
     detailsDiv.className = "task-details";
-    const taskSpan = document.createElement('span');
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.addEventListener("change", function () {
+      li.classList.toggle("task-completed", checkbox.checked);
+      saveTasksToLocalStorage();
+    });
+    detailsDiv.appendChild(checkbox);
+
+    const taskSpan = document.createElement("span");
     taskSpan.className = "task-text";
     taskSpan.textContent = `Todo: ${text} | Priority: ${priorityValue} | Subject: ${subjectValue} | Sub-Subject: ${subSubjectValue}`;
     detailsDiv.appendChild(taskSpan);
-    
-    const delButton = document.createElement('button');
+
+    const editButton = document.createElement("button");
+    editButton.className = "edit-task";
+    editButton.textContent = "Edit";
+    editButton.addEventListener("click", function () {
+      const newText = prompt("Edit task:", text);
+      if (newText !== null && newText.trim() !== "") {
+        taskSpan.textContent = `Todo: ${newText.trim()} | Priority: ${priorityValue} | Subject: ${subjectValue} | Sub-Subject: ${subSubjectValue}`;
+        saveTasksToLocalStorage();
+      }
+    });
+    detailsDiv.appendChild(editButton);
+
+    const delButton = document.createElement("button");
     delButton.className = "delete-task";
     delButton.textContent = "Delete";
-    delButton.addEventListener('click', function() {
+    delButton.addEventListener("click", function () {
       if (isTimerRunning && taskQueue[currentTaskIndex] === li) {
         stopTaskTimers();
       }
@@ -178,9 +213,9 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     detailsDiv.appendChild(delButton);
     li.appendChild(detailsDiv);
-    
+
     // Timer section with text inputs and AM/PM selectors
-    const timerDiv = document.createElement('div');
+    const timerDiv = document.createElement("div");
     timerDiv.className = "task-timer-section";
     timerDiv.innerHTML = `
       <label>Start Time: 
@@ -201,22 +236,22 @@ document.addEventListener("DOMContentLoaded", function() {
       <span class="task-timer-display"></span>
     `;
     li.appendChild(timerDiv);
-    
+
     li.dataset.timerSet = timerSet ? "true" : "false";
     li.dataset.taskStart = taskStart;
     li.dataset.taskEnd = taskEnd;
-    
+
     if (timerSet) {
-      const displaySpan = timerDiv.querySelector('.task-timer-display');
+      const displaySpan = timerDiv.querySelector(".task-timer-display");
       displaySpan.textContent = `Timer set: ${taskStart} to ${taskEnd}`;
     }
-    
-    const setTimerButton = timerDiv.querySelector('.set-task-timer');
-    setTimerButton.addEventListener('click', function() {
-      const startTimeInput = timerDiv.querySelector('.task-start').value;
-      const startAmpmSelect = timerDiv.querySelector('.task-start-ampm').value;
-      const endTimeInput = timerDiv.querySelector('.task-end').value;
-      const endAmpmSelect = timerDiv.querySelector('.task-end-ampm').value;
+
+    const setTimerButton = timerDiv.querySelector(".set-task-timer");
+    setTimerButton.addEventListener("click", function () {
+      const startTimeInput = timerDiv.querySelector(".task-start").value;
+      const startAmpmSelect = timerDiv.querySelector(".task-start-ampm").value;
+      const endTimeInput = timerDiv.querySelector(".task-end").value;
+      const endAmpmSelect = timerDiv.querySelector(".task-end-ampm").value;
       if (!startTimeInput || !endTimeInput) {
         alert("Please set both start and end times for the task in HH:MM format.");
         return;
@@ -230,15 +265,15 @@ document.addEventListener("DOMContentLoaded", function() {
       li.dataset.timerSet = "true";
       li.dataset.taskStart = startTimeStr;
       li.dataset.taskEnd = endTimeStr;
-      const displaySpan = timerDiv.querySelector('.task-timer-display');
+      const displaySpan = timerDiv.querySelector(".task-timer-display");
       displaySpan.textContent = `Timer set: ${startTimeStr} to ${endTimeStr}`;
       saveTasksToLocalStorage();
     });
-    
+
     return li;
   }
-  
-  addTodoButton.addEventListener('click', function() {
+
+  addTodoButton.addEventListener("click", function () {
     const text = todoText.value.trim();
     if (text === "") {
       alert("Please enter a todo item.");
@@ -249,45 +284,58 @@ document.addEventListener("DOMContentLoaded", function() {
     todoText.value = "";
     saveTasksToLocalStorage();
   });
-  
+
   function saveTasksToLocalStorage() {
     const tasks = [];
     const taskElements = todoList.querySelectorAll("li");
-    taskElements.forEach(li => {
+    taskElements.forEach((li) => {
       tasks.push({
-        text: li.querySelector('.task-text').textContent,
+        text: li.querySelector(".task-text").textContent,
         timerSet: li.dataset.timerSet,
         taskStart: li.dataset.taskStart,
-        taskEnd: li.dataset.taskEnd
+        taskEnd: li.dataset.taskEnd,
+        completed: li.classList.contains("task-completed"),
       });
     });
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }
-  
+
   function loadTasksFromLocalStorage() {
     const tasksString = localStorage.getItem("tasks");
     if (tasksString) {
       const tasks = JSON.parse(tasksString);
-      tasks.forEach(task => {
-        const li = createTaskElement(task.text, "", "", "", task.timerSet === "true", task.taskStart, task.taskEnd);
+      tasks.forEach((task) => {
+        const li = createTaskElement(
+          task.text,
+          "",
+          "",
+          "",
+          task.timerSet === "true",
+          task.taskStart,
+          task.taskEnd
+        );
+        if (task.completed) {
+          li.classList.add("task-completed");
+          li.querySelector('input[type="checkbox"]').checked = true;
+        }
         todoList.appendChild(li);
       });
     }
   }
-  
+
   loadTasksFromLocalStorage();
-  
+
   function stopTaskTimers() {
     if (countdownIntervalId) clearInterval(countdownIntervalId);
     isTimerRunning = false;
     currentTaskIndex = 0;
     timerStatus.textContent = "No Task Running";
   }
-  
+
   function beepSound(duration, isSiren) {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioCtx.createOscillator();
-    oscillator.type = isSiren ? 'sawtooth' : 'sine';
+    oscillator.type = isSiren ? "sawtooth" : "sine";
     const gainNode = audioCtx.createGain();
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
@@ -312,7 +360,7 @@ document.addEventListener("DOMContentLoaded", function() {
       oscillator.stop(audioCtx.currentTime + duration);
     }
   }
-  
+
   // Parse a 12-hour time string "HH:MM AM/PM" to a Date object (today; if passed, assume next day)
   function getScheduledTime(timeStr) {
     const parts = timeStr.trim().split(" ");
@@ -331,11 +379,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     return scheduled;
   }
-  
+
   function startTaskTimers() {
     taskQueue = [];
     const tasks = todoList.querySelectorAll("li");
-    tasks.forEach(task => {
+    tasks.forEach((task) => {
       if (task.dataset.timerSet === "true" && task.dataset.taskStart && task.dataset.taskEnd) {
         taskQueue.push(task);
       }
@@ -344,13 +392,15 @@ document.addEventListener("DOMContentLoaded", function() {
       alert("No tasks with timer set found.");
       return;
     }
-    taskQueue.sort((a, b) => getScheduledTime(a.dataset.taskStart) - getScheduledTime(b.dataset.taskStart));
+    taskQueue.sort(
+      (a, b) => getScheduledTime(a.dataset.taskStart) - getScheduledTime(b.dataset.taskStart)
+    );
     currentTaskIndex = 0;
     isTimerRunning = true;
     timerStatus.textContent = "";
     processNextTask();
   }
-  
+
   function processNextTask() {
     if (currentTaskIndex >= taskQueue.length) {
       timerStatus.textContent = "All tasks completed.";
@@ -363,7 +413,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const now = new Date();
     let waitTime = scheduledStart - now;
     if (waitTime < 0) waitTime = 0;
-    timerStatus.textContent = `Waiting for task ${currentTaskIndex + 1} to start at ${currentTask.dataset.taskStart}`;
+    timerStatus.textContent = `Waiting for task ${currentTaskIndex + 1} to start at ${
+      currentTask.dataset.taskStart
+    }`;
     setTimeout(() => {
       timerStatus.textContent = `Task ${currentTaskIndex + 1} starting...`;
       beepSound(5, false);
@@ -386,34 +438,34 @@ document.addEventListener("DOMContentLoaded", function() {
       }, 5000);
     }, waitTime);
   }
-  
+
   function formatTime(milliseconds) {
     const seconds = Math.ceil(milliseconds / 1000);
-    const mm = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const ss = Math.floor(seconds % 60).toString().padStart(2, '0');
+    const mm = Math.floor(seconds / 60).toString().padStart(2, "0");
+    const ss = Math.floor(seconds % 60).toString().padStart(2, "0");
     return `Time Remaining: ${mm}:${ss}`;
   }
-  
-  startAllTimersButton.addEventListener('click', function() {
+
+  startAllTimersButton.addEventListener("click", function () {
     if (isTimerRunning) {
       alert("Timer is already running.");
       return;
     }
     startTaskTimers();
   });
-  
+
   // Update real-time clock in 12-hour format with AM/PM
   function updateRealTime() {
     const now = new Date();
     let hours = now.getHours();
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+    const seconds = now.getSeconds().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12;
-    if(hours === 0) hours = 12;
-    realtime.textContent = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+    if (hours === 0) hours = 12;
+    realtime.textContent = `${hours.toString().padStart(2, "0")}:${minutes}:${seconds} ${ampm}`;
   }
-  
+
   setInterval(updateRealTime, 1000);
   updateRealTime();
 });
