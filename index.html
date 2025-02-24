@@ -1,64 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <!-- Disable zooming and restrict touch actions -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
-  <title>Todo App with Task Timers and Dark Mode</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Header with Todo App text on left, real-time clock in center,
-       and dark mode toggle on the top left corner -->
-  <header class="app-header">
-    <button id="darkModeToggle" class="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
-    <h1>Todo App</h1>
-    <div id="realtime"></div>
-  </header>
-  
-  <!-- Main app container -->
+  <div class="app-header">
+    <h1>Task Manager</h1>
+    <div id="realtime">00:00:00 AM</div>
+    <button id="darkModeToggle">🌙</button>
+  </div>
   <div class="container">
-      <!-- Todo & Task Input Section -->
-      <div class="todo-input">
-         <input type="text" id="todoText" placeholder="Enter your todo..." />
-         <select id="priority">
-             <option value="High">High</option>
-             <option value="Medium" selected>Medium</option>
-             <option value="Low">Low</option>
-         </select>
-         <!-- Main subject dropdown with Add More option -->
-         <select id="subject">
-             <option value="STATISTICS">STATISTICS</option>
-             <option value="MATHEMATICS">MATHEMATICS</option>
-             <option value="ECONOMICS">ECONOMICS</option>
-             <option value="ADD_MORE">Add More</option>
-         </select>
-         <button id="deleteSubject">Delete Subject</button>
-         <!-- Sub-Subject dropdown with Add More option -->
-         <select id="subSubject">
-             <option value="None">Select Sub-Subject</option>
-         </select>
-         <button id="deleteSubSubject">Delete Sub-Subject</button>
-         <button id="addTodo">Add Todo</button>
-      </div>
-      
-      <!-- Todo List: Each task will appear here with its own timer inputs -->
-      <ul id="todoList"></ul>
-      <hr />
-      
-      <!-- Global Timer Section for Sequential Task Timers -->
-      <div class="global-timer">
-         <h2>Task Timer Status</h2>
-         <button id="startAllTimers">Start All Timers</button>
-         <!-- Timer status appears below the button -->
-         <div id="timerStatus">No Task Running</div>
-      </div>
+    <!-- Task Input Section -->
+    <div class="todo-input">
+      <input type="text" id="todoText" placeholder="Enter a new task">
+      <select id="priority">
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <select id="subject">
+        <option value="STATISTICS">STATISTICS</option>
+        <option value="MATHEMATICS">MATHEMATICS</option>
+        <option value="ECONOMICS">ECONOMICS</option>
+        <option value="ADD_MORE">Add More</option>
+      </select>
+      <select id="subSubject">
+        <option value="None">Select Sub-Subject</option>
+      </select>
+      <button id="addTodo">Add Task</button>
+      <button id="deleteSubject">Delete Subject</button>
+      <button id="deleteSubSubject">Delete Sub-Subject</button>
+    </div>
+
+    <!-- Filter and Sort Controls -->
+    <div class="filter-sort-controls">
+      <select id="filterPriority">
+        <option value="all">All Priorities</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <select id="filterSubject">
+        <option value="all">All Subjects</option>
+      </select>
+      <select id="filterCompletion">
+        <option value="all">All Tasks</option>
+        <option value="completed">Completed</option>
+        <option value="incomplete">Incomplete</option>
+      </select>
+      <button id="sortByPriority">Sort by Priority</button>
+      <button id="sortByDueTime">Sort by Due Time</button>
+    </div>
+
+    <!-- Task List -->
+    <ul id="todoList"></ul>
+
+    <!-- Global Timer Section -->
+    <div class="global-timer">
+      <button id="startAllTimers">Start All Timers</button>
+      <div id="timerStatus">No Task Running</div>
+    </div>
+
+    <!-- Export/Import Buttons -->
+    <div class="export-import-buttons">
+      <button id="exportTasks">Export Tasks</button>
+      <button id="importTasks">Import Tasks</button>
+    </div>
   </div>
 
-  <!-- Footer with Developer info -->
-  <footer class="footer">
-      <p class="developer"><strong>Developed by: KhanOsama</strong></p>
-  </footer>
+  <!-- Footer -->
+  <div class="footer">
+    <p class="developer">Developed by: KhanOsama</p>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
